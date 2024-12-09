@@ -89,9 +89,9 @@ final class RegisterUITest: XCTestCase {
         }
     }
     
-    private func waitForElement(_ element: XCUIElement, timeout: TimeInterval = 1, message: String) {
-        XCTContext.runActivity(named: "Ожидание элемента: \(element)") { _ in
-            XCTAssertTrue(element.waitForExistence(timeout: timeout), message)
+    private func waitForElement(_ element: XCUIElement, timeout: TimeInterval = 1, message: String, file: StaticString = #file, line: UInt = #line) {
+        XCTContext.runActivity(named: "Ожидание элемента") { _ in
+            XCTAssertTrue(element.waitForExistence(timeout: timeout), message, file: file, line: line)
         }
     }
     
@@ -142,12 +142,13 @@ final class RegisterUITest: XCTestCase {
         }
     }
     
-    private func tapLogInButtonInModal() {
-        XCTContext.runActivity(named: "Нажимаю кнопку 'Log in' в модальном окне 'Congratulations!") { _ in
+    private func tapLogInButtonInModal(file: StaticString = #file, line: UInt = #line) {
+        XCTContext.runActivity(named: "Нажимаю кнопку 'Log in' в модальном окне 'Congratulations!'") { _ in
             let modal = app.otherElements.containing(.staticText, identifier: "Congratulations!").firstMatch
             let logInButton = modal.buttons["Log in"]
-            waitForElement(logInButton, message: "The 'Log in' button in the modal window did not appear.")
-            XCTAssertTrue(logInButton.isHittable, "The 'Log in' button is not tappable.")
+            
+            waitForElement(logInButton, message: "The 'Log in' button in the modal window did not appear.", file: file, line: line)
+            XCTAssertTrue(logInButton.isHittable, "The 'Log in' button is not tappable.", file: file, line: line)
             logInButton.tap()
         }
     }
