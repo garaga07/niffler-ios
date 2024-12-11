@@ -2,33 +2,37 @@ import XCTest
 
 class LoginPage: BasePage {
     
-    @discardableResult
-    func input(login: String, password: String) -> Self {
-        XCTContext.runActivity(named: "Авторизуюсь \(login), \(password)") { _ in
-            input(login: login)
-            input(password: password)
+    func login(userName: String, password: String) {
+        XCTContext.runActivity(named: "Выполняю вход с именем пользователя '\(userName)' и паролем") { _ in
+            fillUserName(userName)
+            fillPassword(password)
             pressLoginButton()
         }
-        return self
     }
     
-    private func input(login: String) {
-        XCTContext.runActivity(named: "Ввожу логин \(login)") { _ in
-            app.textFields["userNameTextField"].tap()
-            app.textFields["userNameTextField"].tap() // TODO: Remove the cause of double tap
-            app.textFields["userNameTextField"].typeText(login)
+    func fillUserName(_ userName: String) {
+        XCTContext.runActivity(named: "Ввожу имя пользователя: \(userName)") { _ in
+            let userNameTextField = app.textFields["userNameTextField"]
+            waitForElement(userNameTextField, message: "The 'userNameTextField' did not appear on the screen.")
+            userNameTextField.tap()
+            userNameTextField.typeText(userName)
         }
     }
     
-    private func input(password: String) {
-        XCTContext.runActivity(named: "Ввожу пароль \(password)") { _ in
-            app.secureTextFields["passwordTextField"].tap()
-            app.secureTextFields["passwordTextField"].typeText(password)
+    func fillPassword(_ password: String) {
+        XCTContext.runActivity(named: "Ввожу пароль: \(password)") { _ in
+            let passwordTextField = app.secureTextFields["passwordTextField"]
+            waitForElement(passwordTextField, message: "The 'passwordTextField' did not appear on the screen.")
+            passwordTextField.tap()
+            passwordTextField.typeText(password)
         }
     }
     
-    private func pressLoginButton() {
+    func pressLoginButton() {
         XCTContext.runActivity(named: "Жму кнопку логина") { _ in
+            let loginButton = app.buttons["loginButton"]
+            waitForElement(loginButton, message: "Login button did not appear on the login screen.")
+            XCTAssertTrue(loginButton.isHittable, "Login button is not tappable.")
             app.buttons["loginButton"].tap()
         }
     }
@@ -57,6 +61,19 @@ class LoginPage: BasePage {
             XCTAssertFalse(isFound,
                            "Появилась ошибка: \(errorLabel.label)",
                           file: file, line: line)
+        }
+    }
+    
+    func navigateToRegistrationScreen() {
+        XCTContext.runActivity(named: "Переход на экран регистрации") { _ in
+            app.staticTexts["Create new account"].tap()
+        }
+    }
+    
+    func verifyScreenTitle(_ title: String, timeout: TimeInterval = 2) {
+        XCTContext.runActivity(named: "Проверяю заголовок экрана: \(title)") { _ in
+            let screenTitle = app.staticTexts[title]
+            waitForElement(screenTitle, timeout: timeout, message: "The '\(title)' title did not appear on the screen.")
         }
     }
 }
