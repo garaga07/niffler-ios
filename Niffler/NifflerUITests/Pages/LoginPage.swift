@@ -28,12 +28,12 @@ class LoginPage: BasePage {
         }
     }
     
-    func pressLoginButton() {
+    func pressLoginButton(file: StaticString = #file, line: UInt = #line) {
         XCTContext.runActivity(named: "Жму кнопку логина") { _ in
             let loginButton = app.buttons["loginButton"]
-            waitForElement(loginButton, message: "Login button did not appear on the login screen.")
-            XCTAssertTrue(loginButton.isHittable, "Login button is not tappable.")
-            app.buttons["loginButton"].tap()
+            waitForElement(loginButton, message: "Login button did not appear on the login screen.", file: file, line: line)
+            XCTAssertTrue(loginButton.isHittable, "Login button is not tappable.", file: file, line: line)
+            loginButton.tap()
         }
     }
     

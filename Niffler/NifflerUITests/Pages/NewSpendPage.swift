@@ -61,4 +61,12 @@ class NewSpendPage: BasePage {
             }
         }
     }
+    
+    func verifyNewCategoryButtonIsVisibleAndTappable(file: StaticString = #file, line: UInt = #line) {
+            let newCategoryButton = app.buttons["+ New category"]
+            waitForElement(newCategoryButton, timeout: 5, message: "'+ New category' button did not appear.", file: file, line: line)
+            
+            XCTAssertTrue(newCategoryButton.exists, "'+ New category' button is not visible.", file: file, line: line)
+            XCTAssertTrue(newCategoryButton.isHittable, "'+ New category' button is not tappable.", file: file, line: line)
+        }
 }

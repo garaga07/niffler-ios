@@ -20,4 +20,8 @@ public struct CategoryDTO: Identifiable, Codable, Hashable, Sendable {
     public var isActive: Bool {
         !archived
     }
+    
+    public var notEmpty: Bool {
+           !name.isEmpty
+       }
 }

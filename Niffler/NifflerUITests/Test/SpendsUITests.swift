@@ -63,7 +63,7 @@ final class SpendsUITests: XCTestCase {
             loginPage.launchAppWithoutLogin()
             
             // Act
-            loginPage.login(userName: "Duck", password: "12345")
+            loginPage.login(userName: "Duck123", password: "12345")
             spendsPage.addSpend()
             newSpendPage.addNewCategory()
             newSpendPage.inputAmount("300")
@@ -132,9 +132,11 @@ final class SpendsUITests: XCTestCase {
             newSpendPage.pressAddSpend()
             profilePage.goToProfileScreen()
             profilePage.deleteCategory("Рыбалка")
+            profilePage.tapCloseButton()
+            spendsPage.addSpend()
             
             // Assert
-            
+            newSpendPage.verifyNewCategoryButtonIsVisibleAndTappable()
         }
     }
 }
