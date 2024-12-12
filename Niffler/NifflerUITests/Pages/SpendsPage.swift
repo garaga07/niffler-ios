@@ -1,39 +1,36 @@
 import XCTest
 
 class SpendsPage: BasePage {
-    func assertIsSpendsViewAppeared(file: StaticString = #filePath, line: UInt = #line) {
-        XCTContext.runActivity(named: "Жду экран с тратами") { _ in
-            waitSpendsScreen(file: file, line: line)
-            XCTAssertGreaterThanOrEqual(app.scrollViews.switches.count, 1,
-                                        "Не нашел трат в списке",
-                                        file: file, line: line)
+    func verifySpendListIsEmpty(expectedValue: String = "0 ₽") {
+        XCTContext.runActivity(named: "Проверяю, что список трат пуст для вновь зарегистрированного пользователя и содержит значение \(expectedValue)") { _ in
+            let spendList = app.staticTexts["spendList"]
+            waitForElement(spendList, timeout: 3, message: "'spendList' element did not appear.")
+            let actualValue = spendList.label
+            XCTAssertEqual(
+                actualValue,
+                expectedValue,
+                "The spend list value does not match the expected value."
+            )
         }
     }
-    
-    @discardableResult
-    func waitSpendsScreen(file: StaticString = #filePath, line: UInt = #line) -> Self {
-        let isFound = app.firstMatch
-            .scrollViews.firstMatch
-            .switches.firstMatch
-            .waitForExistence(timeout: 10)
-        
-        XCTAssertTrue(isFound,
-                      "Не дождались экрана со списком трат",
-                      file: file, line: line)
-        
-        return self
+
+    func addSpend() {
+        XCTContext.runActivity(named: "Нажимаю кнопку добавления траты") { _ in
+            let addSpendButton = app.buttons["addSpendButton"]
+            waitForElement(addSpendButton, timeout: 5, message: "'addSpendButton' button did not appear.")
+            addSpendButton.tap()
+        }
     }
-    
-    func addSpent() {
-        app.buttons["addSpendButton"].tap()
-    }
-    
+
     func assertNewSpendIsShown(title: String, file: StaticString = #filePath, line: UInt = #line) {
-        let isFound = app.firstMatch
-            .scrollViews.firstMatch
-            .staticTexts[title].firstMatch
-            .waitForExistence(timeout: 1)
-        
-        XCTAssertTrue(isFound, file: file, line: line)
+        XCTContext.runActivity(named: "Проверяю, что новая трата с заголовком '\(title)' отображается в списке") { _ in
+            let spendTitle = app.firstMatch
+                .scrollViews.firstMatch
+                .staticTexts[title].firstMatch
+
+            waitForElement(spendTitle, timeout: 2, message: "Spend with title '\(title)' was not found in the list.")
+
+            XCTAssertTrue(spendTitle.exists, "Spend with title '\(title)' is not displayed in the list.", file: file, line: line)
+        }
     }
 }

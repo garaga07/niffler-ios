@@ -1,40 +1,72 @@
 import XCTest
 
 class NewSpendPage: BasePage {
-    
-    func inputSpent(title: String) {
-        inputAmount()
-        .selectCategory()
-        .inputDescription(title)
-//        .swipeToAddSpendsButton()
-        .pressAddSpend()
+    func inputAmount(_ amount: String) {
+        XCTContext.runActivity(named: "Ввожу сумму: \(amount)") { _ in
+            let amountField = app.textFields["amountField"]
+            waitForElement(amountField, message: "'amountField' field was not found.")
+            amountField.tap()
+            amountField.typeText(amount)
+        }
     }
     
-    func inputAmount() -> Self {
-        app.textFields["amountField"].typeText("14")
-        return self
+    func inputDescription(_ title: String) {
+        XCTContext.runActivity(named: "Ввожу описание траты: \(title)") { _ in
+            let descriptionField = app.textFields["descriptionField"]
+            waitForElement(descriptionField, message: "'descriptionField' field was not found.")
+            descriptionField.tap()
+            descriptionField.typeText(title)
+        }
     }
-    
-    func selectCategory() -> Self {
-        app.buttons["Select category"].tap()
-        app.buttons["Рыбалка"].tap() // TODO: Bug
-        return self
-    }
-    
-    func inputDescription(_ title: String) -> Self {
-        app.textFields["descriptionField"].tap()
-        app.textFields["descriptionField"].typeText(title)
-        return self
-    }
-    
-//    func swipeToAddSpendsButton() -> Self {
-//        let screenCenter = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-//        let screenTop = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
-//        screenCenter.press(forDuration: 0.01, thenDragTo: screenTop)
-//        return self
-//    }
     
     func pressAddSpend() {
-        app.buttons["Add"].tap()
+        XCTContext.runActivity(named: "Нажимаю кнопку 'Add' для сохранения траты") { _ in
+            let addButton = app.buttons["Add"]
+            waitForElement(addButton, message: "'Add' button did not appear.")
+            addButton.tap()
+        }
     }
+    
+    func fillCategoryName(in modal: XCUIElement, _ categoryName: String) {
+        XCTContext.runActivity(named: "Ввожу название категории: \(categoryName)") { _ in
+            let categoryField = modal.textFields["Name"]
+            waitForElement(categoryField, message: "'Name' field was not found in the modal window.")
+            categoryField.tap()
+            categoryField.typeText(categoryName)
+        }
+    }
+    
+    func pressAddCategoryButton(in container: XCUIElement, file: StaticString = #file, line: UInt = #line) {
+        XCTContext.runActivity(named: "Нажимаю кнопку 'Add' в модальном окне 'Add Category'") { _ in
+            let addCategoryButton = container.buttons["Add"]
+            waitForElement(addCategoryButton, message: "'Add' button in the modal window did not appear.", file: file, line: line)
+            XCTAssertTrue(addCategoryButton.isHittable, "'Add' button is not tappable.", file: file, line: line)
+            addCategoryButton.tap()
+        }
+    }
+    
+    func addNewCategory(_ categoryName: String = "Рыбалка") {
+        XCTContext.runActivity(named: "Добавляю новую категорию: \(categoryName)") { _ in
+            let newCategoryButton = app.buttons["+ New category"]
+            waitForElement(newCategoryButton, timeout: 5, message: "'+ New category' button did not appear.")
+            
+            if newCategoryButton.isHittable {
+                newCategoryButton.tap()
+                let modalNewCategory = app.otherElements.containing(.staticText, identifier: "Add category").firstMatch
+                fillCategoryName(in: modalNewCategory, categoryName)
+                pressAddCategoryButton(in: modalNewCategory)
+            } else {
+                app.buttons["Select category"].tap()
+                app.buttons[categoryName].tap()
+            }
+        }
+    }
+    
+    func verifyNewCategoryButtonIsVisibleAndTappable(file: StaticString = #file, line: UInt = #line) {
+            let newCategoryButton = app.buttons["+ New category"]
+            waitForElement(newCategoryButton, timeout: 5, message: "'+ New category' button did not appear.", file: file, line: line)
+            
+            XCTAssertTrue(newCategoryButton.exists, "'+ New category' button is not visible.", file: file, line: line)
+            XCTAssertTrue(newCategoryButton.isHittable, "'+ New category' button is not tappable.", file: file, line: line)
+        }
 }
