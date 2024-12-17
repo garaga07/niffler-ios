@@ -9,11 +9,12 @@ import XCTest
 
 class ProfilePage: BasePage {
     
-    func goToProfileScreen() {
+    func goToProfileScreen() -> Self {
         XCTContext.runActivity(named: "Перехожу на экран профиля") { _ in
             openBurgerMenu()
             tapProfileButton()
         }
+        return self
     }
     
     private func openBurgerMenu() {
@@ -41,7 +42,7 @@ class ProfilePage: BasePage {
         }
     }
     
-    func deleteCategory(_ categoryName: String) {
+    func deleteCategory(_ categoryName: String) -> Self {
         XCTContext.runActivity(named: "Удаляю категорию '\(categoryName)'") { _ in
             let categoryCell = app.cells.containing(.staticText, identifier: categoryName).firstMatch
             waitForElement(categoryCell, message: "The category '\(categoryName)' did not appear on the screen.")
@@ -57,6 +58,15 @@ class ProfilePage: BasePage {
                 XCTAssertTrue(deleteButton.isHittable, "The 'Delete' button is not tappable.")
                 deleteButton.tap()
             }
+        }
+        return self
+    }
+    
+    func tapCloseButton() {
+        XCTContext.runActivity(named: "Нажимаю кнопку 'Close'") { _ in
+            let closeButton = app.buttons["Close"]
+            waitForElement(closeButton, timeout: 5, message: "The 'Close' button did not appear.")
+            closeButton.tap()
         }
     }
 }

@@ -7,43 +7,37 @@
 
 import XCTest
 
-final class RegisterUITest: XCTestCase {
+final class RegisterUITest: TestCase {
     
     func testRegisterNewUser() throws {
         XCTContext.runActivity(named: "Тест регистрации нового пользователя") { _ in
-            let app = XCUIApplication()
-            let loginPage = LoginPage(app: app)
-            let registerPage = RegisterPage(app: app)
             
             // Arrange
-            loginPage.launchAppWithoutLogin()
+            launchAppWithoutLogin()
             let uniqueUserName = RandomDataUtils.generateUniqueUserName()
             
             // Act
             loginPage.navigateToRegistrationScreen()
-            registerPage.registerUser(userName: uniqueUserName, password: "12345", confirmPassword: "12345")
+                .registerUser(userName: uniqueUserName, password: "12345", confirmPassword: "12345")
             
             // Assert
-            registerPage.verifyCongratulationsModal()
-            registerPage.tapLogInButtonInModal()
+                .verifyCongratulationsModal()
+                .tapLogInButtonInModal()
             loginPage.verifyScreenTitle("Log in")
         }
     }
     
     func testLoginScreenValuesPersistedToRegistrationScreen() throws {
         XCTContext.runActivity(named: "Проверка переноса данных с логина на экран регистрации") { _ in
-            let app = XCUIApplication()
-            let loginPage = LoginPage(app: app)
-            let registerPage = RegisterPage(app: app)
             
             // Arrange
-            loginPage.launchAppWithoutLogin()
+            launchAppWithoutLogin()
             let uniqueUserName = RandomDataUtils.generateUniqueUserName()
             
             // Act
             loginPage.fillUserName(uniqueUserName)
-            loginPage.fillPassword("12345")
-            loginPage.navigateToRegistrationScreen()
+                .fillPassword("12345")
+                .navigateToRegistrationScreen()
             
             // Assert
             let registrationForm = registerPage.getRegistrationForm()
