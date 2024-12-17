@@ -1,22 +1,18 @@
 import XCTest
 
-final class SpendsUITests: XCTestCase {
+final class SpendsUITests: TestCase {
     
     func testSpendListIsEmptyAfterRegistration() throws {
         XCTContext.runActivity(named: "Тест: пустой список трат после регистрации нового пользователя") { _ in
-            let app = XCUIApplication()
-            let loginPage = LoginPage(app: app)
-            let registerPage = RegisterPage(app: app)
-            let spendsPage = SpendsPage(app: app)
             
             // Arrange
-            loginPage.launchAppWithoutLogin()
+            launchAppWithoutLogin()
             let uniqueUserName = RandomDataUtils.generateUniqueUserName()
             
             // Act
             loginPage.navigateToRegistrationScreen()
-            registerPage.registerUser(userName: uniqueUserName, password: "12345", confirmPassword: "12345")
-            registerPage.tapLogInButtonInModal()
+                .registerUser(userName: uniqueUserName, password: "12345", confirmPassword: "12345")
+                .tapLogInButtonInModal()
             loginPage.pressLoginButton()
             
             // Assert
@@ -26,26 +22,21 @@ final class SpendsUITests: XCTestCase {
     
     func testAddNewSpendWithNewCategory() throws {
         XCTContext.runActivity(named: "Тест: добавление траты с новой категорией") { _ in
-            let app = XCUIApplication()
-            let loginPage = LoginPage(app: app)
-            let registerPage = RegisterPage(app: app)
-            let spendsPage = SpendsPage(app: app)
-            let newSpendPage = NewSpendPage(app: app)
             
             // Arrange
-            loginPage.launchAppWithoutLogin()
+            launchAppWithoutLogin()
             let uniqueUserName = RandomDataUtils.generateUniqueUserName()
             
             // Act
             loginPage.navigateToRegistrationScreen()
-            registerPage.registerUser(userName: uniqueUserName, password: "12345", confirmPassword: "12345")
-            registerPage.tapLogInButtonInModal()
+                .registerUser(userName: uniqueUserName, password: "12345", confirmPassword: "12345")
+                .tapLogInButtonInModal()
             loginPage.pressLoginButton()
             spendsPage.addSpend()
             newSpendPage.addNewCategory()
-            newSpendPage.inputAmount("1000")
-            newSpendPage.inputDescription("Удочки")
-            newSpendPage.pressAddSpend()
+                .inputAmount("1000")
+                .inputDescription("Удочки")
+                .pressAddSpend()
             
             // Assert
             spendsPage.assertNewSpendIsShown(title: "Удочки")
@@ -54,22 +45,18 @@ final class SpendsUITests: XCTestCase {
     
     func testAddNewSpendWithExistingCategory() throws {
         XCTContext.runActivity(named: "Тест: добавление траты с существующей категорией") { _ in
-            let app = XCUIApplication()
-            let loginPage = LoginPage(app: app)
-            let spendsPage = SpendsPage(app: app)
-            let newSpendPage = NewSpendPage(app: app)
             
             // Arrange
-            loginPage.launchAppWithoutLogin()
+            launchAppWithoutLogin()
             
             // Act
             loginPage.login(userName: "Duck123", password: "12345")
             spendsPage.addSpend()
             newSpendPage.addNewCategory()
-            newSpendPage.inputAmount("300")
+                .inputAmount("300")
             let randomDescription = RandomDataUtils.generateRandomString(length: 10)
             newSpendPage.inputDescription(randomDescription)
-            newSpendPage.pressAddSpend()
+                .pressAddSpend()
             
             // Assert
             spendsPage.assertNewSpendIsShown(title: randomDescription)
@@ -78,61 +65,48 @@ final class SpendsUITests: XCTestCase {
     
     func testVerifyCategoryInProfileAfterAddingNewSpend() throws {
         XCTContext.runActivity(named: "Тест: проверка отображения новой категории в профиле после добавления траты") { _ in
-            let app = XCUIApplication()
-            let loginPage = LoginPage(app: app)
-            let registerPage = RegisterPage(app: app)
-            let spendsPage = SpendsPage(app: app)
-            let newSpendPage = NewSpendPage(app: app)
-            let profilePage = ProfilePage(app: app)
-            
             
             // Arrange
-            loginPage.launchAppWithoutLogin()
+            launchAppWithoutLogin()
             let uniqueUserName = RandomDataUtils.generateUniqueUserName()
             
             // Act
             loginPage.navigateToRegistrationScreen()
-            registerPage.registerUser(userName: uniqueUserName, password: "12345", confirmPassword: "12345")
-            registerPage.tapLogInButtonInModal()
+                .registerUser(userName: uniqueUserName, password: "12345", confirmPassword: "12345")
+                .tapLogInButtonInModal()
             loginPage.pressLoginButton()
             spendsPage.addSpend()
             newSpendPage.addNewCategory()
-            newSpendPage.inputAmount("1000")
-            newSpendPage.inputDescription("Удочки")
-            newSpendPage.pressAddSpend()
+                .inputAmount("1000")
+                .inputDescription("Удочки")
+                .pressAddSpend()
             profilePage.goToProfileScreen()
             
             // Assert
-            profilePage.verifyCategory("Рыбалка")
+                .verifyCategory("Рыбалка")
         }
     }
     
     func testDeletedCategoryIsNotShownInSpendScreen() throws {
         XCTContext.runActivity(named: "Тест: проверка, что удалённая категория не отображается на экране добавления новой траты") { _ in
-            let app = XCUIApplication()
-            let loginPage = LoginPage(app: app)
-            let registerPage = RegisterPage(app: app)
-            let spendsPage = SpendsPage(app: app)
-            let newSpendPage = NewSpendPage(app: app)
-            let profilePage = ProfilePage(app: app)
             
             // Arrange
-            loginPage.launchAppWithoutLogin()
+            launchAppWithoutLogin()
             let uniqueUserName = RandomDataUtils.generateUniqueUserName()
             
             // Act
             loginPage.navigateToRegistrationScreen()
-            registerPage.registerUser(userName: uniqueUserName, password: "12345", confirmPassword: "12345")
-            registerPage.tapLogInButtonInModal()
+                .registerUser(userName: uniqueUserName, password: "12345", confirmPassword: "12345")
+                .tapLogInButtonInModal()
             loginPage.pressLoginButton()
             spendsPage.addSpend()
             newSpendPage.addNewCategory()
-            newSpendPage.inputAmount("1000")
-            newSpendPage.inputDescription("Удочки")
-            newSpendPage.pressAddSpend()
+                .inputAmount("1000")
+                .inputDescription("Удочки")
+                .pressAddSpend()
             profilePage.goToProfileScreen()
-            profilePage.deleteCategory("Рыбалка")
-            profilePage.tapCloseButton()
+                .deleteCategory("Рыбалка")
+                .tapCloseButton()
             spendsPage.addSpend()
             
             // Assert
